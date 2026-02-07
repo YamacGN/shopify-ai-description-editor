@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopify AI Ürün Açıklama Düzenleyici</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ Shopify AI Ürün Açıklama Düzenleyici</h1>
+            <p class="subtitle">OpenAI ile ürün açıklamalarınızı optimize edin</p>
+            <div id="status" class="status">
+                <span id="status-indicator"></span>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="single">Tekli Düzenleme</button>
+            <button class="tab-button" data-tab="batch">Toplu İşlem</button>
+        </div>
+
+        <div id="single-tab" class="tab-content active">
+            <div class="search-section">
+                <input type="text" id="search-input" placeholder="Ürün ara..." class="search-input">
+                <button id="load-products-btn" class="btn btn-primary">Ürünleri Yükle</button>
+            </div>
+
+            <div id="products-container" class="products-container">
+                <div class="empty-state">
+                    <p>👆 Ürünleri yüklemek için butona tıklayın</p>
+                </div>
+            </div>
+
+            <div id="editor-section" class="editor-section" style="display: none;">
+                <div class="editor-header">
+                    <h2 id="product-title"></h2>
+                    <span id="product-id" class="product-id"></span>
+                </div>
+
+                <div class="editor-content">
+                    <div class="editor-column">
+                        <h3>Mevcut Açıklama</h3>
+                        <div id="current-description" class="description-box"></div>
+                        <button id="improve-btn" class="btn btn-secondary">✨ AI ile İyileştir</button>
+                    </div>
+
+                    <div class="editor-column">
+                        <h3>İyileştirilmiş Açıklama</h3>
+                        <div id="improved-description" class="description-box editable" contenteditable="true"></div>
+                        <button id="save-btn" class="btn btn-success" style="display: none;">💾 Shopify'a Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="batch-tab" class="tab-content">
+            <div class="batch-section">
+                <div class="batch-controls">
+                    <button id="select-all-btn" class="btn btn-secondary">Tümünü Seç</button>
+                    <button id="deselect-all-btn" class="btn btn-secondary">Seçimi Kaldır</button>
+                    <button id="process-batch-btn" class="btn btn-primary" disabled>Seçilenleri İşle</button>
+                </div>
+
+                <div id="batch-products" class="batch-products">
+                    <div class="empty-state">
+                        <p>Önce "Tekli Düzenleme" sekmesinden ürünleri yükleyin</p>
+                    </div>
+                </div>
+
+                <div id="batch-progress" class="batch-progress" style="display: none;">
+                    <h3>İşlem Durumu</h3>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <p id="progress-text">0 / 0</p>
+                </div>
+
+                <div id="batch-results" class="batch-results"></div>
+            </div>
+        </div>
+
+        <div id="message-container" class="message-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
