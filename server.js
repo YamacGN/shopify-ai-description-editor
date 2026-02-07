@@ -7,9 +7,13 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI only if API key is provided
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
 
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE_URL;
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN;
@@ -52,6 +56,10 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/improve-description', async (req, res) => {
   try {
+    if (!openai) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
+    
     const { currentDescription, productTitle } = req.body;
     
     const completion = await openai.chat.completions.create({
@@ -80,6 +88,10 @@ app.post('/api/improve-description', async (req, res) => {
 
 app.post('/api/improve-bulk', async (req, res) => {
   try {
+    if (!openai) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
+    
     const { products } = req.body;
     const results = [];
 
@@ -145,7 +157,7 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
     shopifyConfigured: !!SHOPIFY_STORE && !!SHOPIFY_ACCESS_TOKEN,
-    openaiConfigured: !!process.env.OPENAI_API_KEY
+    openaiConfigured: !!openai
   });
 });
 
