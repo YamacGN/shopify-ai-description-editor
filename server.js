@@ -149,6 +149,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Serve configuration endpoint for frontend
+app.get('/api/config', (req, res) => {
+  res.json({
+    apiBaseUrl: process.env.API_BASE_URL || ''
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 
@@ -156,4 +163,7 @@ app.listen(PORT, HOST, () => {
   console.log(`🚀 Server running on http://${HOST}:${PORT}`);
   console.log(`📦 Shopify Store: ${SHOPIFY_STORE || 'NOT CONFIGURED'}`);
   console.log(`🤖 OpenAI: ${process.env.OPENAI_API_KEY ? 'CONFIGURED' : 'NOT CONFIGURED'}`);
+  if (process.env.API_BASE_URL) {
+    console.log(`🌐 API Base URL: ${process.env.API_BASE_URL}`);
+  }
 });

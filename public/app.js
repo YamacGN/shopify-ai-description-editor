@@ -2,6 +2,7 @@
 let products = [];
 let currentProduct = null;
 let selectedProducts = new Set();
+let API_BASE_URL = ''; // Will be loaded from config
 
 // DOM Elements
 const searchInput = document.getElementById('search-input');
@@ -27,6 +28,24 @@ const batchResults = document.getElementById('batch-results');
 const progressFill = document.getElementById('progress-fill');
 const progressText = document.getElementById('progress-text');
 
+// Load API configuration
+async function loadConfig() {
+    try {
+        const response = await fetch('/api/config');
+        const config = await response.json();
+        API_BASE_URL = config.apiBaseUrl || '';
+        console.log('API Base URL:', API_BASE_URL || 'Same server');
+    } catch (error) {
+        console.warn('Could not load config, using same-server API:', error);
+        API_BASE_URL = '';
+    }
+}
+
+// Helper function to build API URL
+function getApiUrl(endpoint) {
+    return API_BASE_URL + endpoint;
+}
+
 // Tab switching
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -50,7 +69,7 @@ document.querySelectorAll('.tab-button').forEach(button => {
 // Check server health
 async function checkHealth() {
     try {
-        const response = await fetch('/api/health');
+        const response = await fetch(getApiUrl('/api/health'));
         const data = await response.json();
         
         if (data.status === 'ok' && data.shopifyConfigured && data.openaiConfigured) {
@@ -84,7 +103,7 @@ loadProductsBtn.addEventListener('click', async () => {
     loadProductsBtn.innerHTML = '<span class="loading"></span> Yükleniyor...';
     
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch(getApiUrl('/api/products'));
         if (!response.ok) throw new Error('Ürünler yüklenemedi');
         
         products = await response.json();
@@ -160,7 +179,7 @@ improveBtn.addEventListener('click', async () => {
     improveBtn.innerHTML = '<span class="loading"></span> İyileştiriliyor...';
     
     try {
-        const response = await fetch('/api/improve-description', {
+        const response = await fetch(getApiUrl('/api/improve-description'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -197,7 +216,7 @@ saveBtn.addEventListener('click', async () => {
     saveBtn.innerHTML = '<span class="loading"></span> Kaydediliyor...';
     
     try {
-        const response = await fetch(`/api/products/${currentProduct.id}`, {
+        const response = await fetch(getApiUrl(`/api/products/${currentProduct.id}`), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ description: newDescription })
@@ -290,7 +309,7 @@ processBatchBtn.addEventListener('click', async () => {
     progressText.textContent = `0 / ${total}`;
     
     try {
-        const response = await fetch('/api/improve-bulk', {
+        const response = await fetch(getApiUrl('/api/improve-bulk'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -334,4 +353,7 @@ processBatchBtn.addEventListener('click', async () => {
 });
 
 // Initialize
-checkHealth();
+(async function init() {
+    await loadConfig();
+    checkHealth();
+})();

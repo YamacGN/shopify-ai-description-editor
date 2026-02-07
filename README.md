@@ -99,6 +99,7 @@ In Railway dashboard, add the following environment variables:
 | `SHOPIFY_ACCESS_TOKEN` | Shopify Admin API token | `shpat_xxxxx` |
 | `OPENAI_API_KEY` | OpenAI API key | `sk-xxxxx` |
 | `NODE_ENV` | Environment | `production` |
+| `API_BASE_URL` | (Optional) API backend URL for separate frontend deployment | Leave empty for same-server |
 
 **Note**: Railway automatically sets the `PORT` variable, so you don't need to configure it.
 
@@ -107,6 +108,26 @@ In Railway dashboard, add the following environment variables:
 1. Railway will automatically deploy after you add the environment variables
 2. Once deployed, Railway will provide you with a public URL
 3. Access your application at `https://your-app.up.railway.app`
+
+### Advanced: Separate Frontend Deployment
+
+If you want to deploy the frontend separately (e.g., on Vercel, Netlify) and connect it to your Railway backend:
+
+1. Deploy the backend to Railway as described above
+2. Note your Railway backend URL: `https://your-app.up.railway.app`
+3. When deploying the frontend separately, set the `API_BASE_URL` environment variable to point to your Railway backend
+4. The frontend will automatically use the Railway backend for all API calls
+
+**Example for separate deployment:**
+```env
+# Frontend environment (e.g., Vercel)
+API_BASE_URL=https://your-app.up.railway.app
+```
+
+This allows you to:
+- Host multiple frontends connecting to one backend
+- Test local frontend against production backend
+- Scale frontend and backend independently
 
 ## 🔑 Getting API Credentials
 
@@ -186,7 +207,26 @@ In Railway dashboard, add the following environment variables:
 - Verify all environment variables are set in Railway dashboard
 - Check Railway logs for specific error messages
 
+**Connecting to Railway-deployed backend**
+- If using a separate Railway backend, ensure `API_BASE_URL` is set correctly
+- Check that the Railway backend URL is accessible (not behind authentication)
+- Verify CORS is properly configured if frontend is on a different domain
+- Test the backend health endpoint: `https://your-app.up.railway.app/api/health`
+
 ## 📊 API Endpoints
+
+### Configuration
+```
+GET /api/config
+```
+Returns API configuration including base URL for Railway deployments.
+
+**Response:**
+```json
+{
+  "apiBaseUrl": "https://your-app.up.railway.app"
+}
+```
 
 ### Health Check
 ```
@@ -248,6 +288,7 @@ Content-Type: application/json
 | `OPENAI_API_KEY` | Yes | - | OpenAI API key |
 | `PORT` | No | 3000 | Server port (Railway sets this automatically) |
 | `NODE_ENV` | No | production | Environment mode |
+| `API_BASE_URL` | No | empty | Railway backend URL for separate frontend deployment |
 
 ### OpenAI Settings
 
