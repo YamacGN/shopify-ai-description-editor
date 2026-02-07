@@ -1,0 +1,1 @@
+# shopify-ai-description-editor
