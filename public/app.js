@@ -207,7 +207,6 @@ saveBtn.addEventListener('click', async () => {
         
         currentProduct.body_html = newDescription;
         currentDescription.innerHTML = newDescription;
-        improvedDescription.innerHTML = '';
         saveBtn.style.display = 'none';
         
         showMessage('Ürün Shopify\'a kaydedildi!', 'success');
@@ -314,7 +313,7 @@ processBatchBtn.addEventListener('click', async () => {
             progressFill.style.width = `${progress}%`;
             progressText.textContent = `${processed} / ${total}`;
             
-            const product = selectedProductsArray.find(p => p.id === result.id);
+            const product = selectedProductsArray.find(p => p.id.toString() === result.id.toString());
             const resultDiv = document.createElement('div');
             resultDiv.className = `result-item ${result.success ? 'success' : 'error'}`;
             resultDiv.innerHTML = `
